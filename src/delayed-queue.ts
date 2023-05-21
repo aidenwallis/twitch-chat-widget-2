@@ -52,11 +52,6 @@ export class DelayedQueue<T> {
     });
   }
 
-  cancelEvent(id: string) {
-    // when this event no longer exists in the set, when it comes to that item in the queue, it'll be skipped
-    this.activeIds.delete(id);
-  }
-
   push(item: T) {
     const id = this.idResolver(item);
     const group = this.groupResolver(item);
