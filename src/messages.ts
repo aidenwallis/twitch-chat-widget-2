@@ -69,7 +69,7 @@ export class MessagesElement extends LitElement {
       idx !== -1 && this.buffer.splice(idx, 1);
 
       // if message is in pending, evict it from the indexes and buffers
-      this.delayedQueue.cancelEvent(id);
+      this.delayedQueue.evictEvent(id);
     });
     this.connection.onUserTimeout((login) => {
       // clear from screen

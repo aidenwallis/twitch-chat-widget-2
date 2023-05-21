@@ -13,6 +13,7 @@
     "lit": "^2.6.1"
   },
   "devDependencies": {
+    "rollup-plugin-html-literals": "^1.1.6",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   }
