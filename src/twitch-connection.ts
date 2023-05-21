@@ -1,6 +1,8 @@
 import { IRCMessage, parse as parseMessage } from "irc-message-ts";
+import { FragmentGenerationFactory } from "./fragment";
 
 export type ChatMessage = ReturnType<typeof buildMessage>;
+export type FragmentedChatMessage = ReturnType<typeof extendMessageWithFragments>;
 
 enum ConnectionState {
   Connected,
@@ -19,7 +21,7 @@ export class TwitchConnection {
   private forceDisconnect = false;
   private login?: string;
   private state = ConnectionState.Disconnected;
-  private messageCallback?: (msg: ChatMessage) => void;
+  private messageCallback?: (msg: FragmentedChatMessage) => void;
   private userTimeoutCallback?: (login: string) => void;
   private deleteMessageCallback?: (id: string) => void;
   private connectionTimeout?: ReturnType<typeof setTimeout>;
@@ -66,7 +68,7 @@ export class TwitchConnection {
     this.conn.onclose = () => this.handleDisconnect();
   }
 
-  public onMessage(cb: (msg: ChatMessage) => void) {
+  public onMessage(cb: (msg: FragmentedChatMessage) => void) {
     this.messageCallback = cb;
   }
 
@@ -89,7 +91,7 @@ export class TwitchConnection {
       }
 
       case "PRIVMSG": {
-        return this.messageCallback?.(buildMessage(parsed));
+        return this.messageCallback?.(extendMessageWithFragments(buildMessage(parsed)));
       }
 
       case "CLEARCHAT": {
@@ -180,6 +182,16 @@ export function buildMessage(data: IRCMessage) {
       displayName: data.tags["display-name"] || "",
       color: data.tags.color,
       badges: parseBadges(data?.tags?.badges || ""),
+    },
+  };
+}
+
+export function extendMessageWithFragments(message: ChatMessage) {
+  return {
+    ...message,
+    content: {
+      ...message.content,
+      fragments: new FragmentGenerationFactory(message).build(),
     },
   };
 }

@@ -2,8 +2,10 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { DelayedQueue } from "./delayed-queue";
+import { ImageFragment } from "./fragment";
 import "./message";
-import { ChatMessage, TwitchConnection } from "./twitch-connection";
+import { FragmentedChatMessage, TwitchConnection } from "./twitch-connection";
+import { isEmoteOnly } from "./url";
 
 const MAX_BUFFER = 100;
 
@@ -12,7 +14,7 @@ export class MessagesElement extends LitElement {
   @property()
   channelLogin?: string;
 
-  private delayedQueue = new DelayedQueue<ChatMessage>(
+  private delayedQueue = new DelayedQueue<FragmentedChatMessage>(
     1000,
     (m) => m.id,
     (m) => m.sender.login,
@@ -45,13 +47,21 @@ export class MessagesElement extends LitElement {
   `;
 
   @property()
-  private buffer: ChatMessage[] = [];
+  private buffer: FragmentedChatMessage[] = [];
+
+  private lastEmoteImage?: string;
 
   constructor() {
     super();
 
     // we delay message appearances to allow for fossabot to time things out
-    this.connection.onMessage((message) => this.delayedQueue.push(message));
+    this.connection.onMessage((message) => {
+      if (isEmoteOnly() && !this.shouldIncludeMessageInEmoteOnly(message)) {
+        // if it's the emote only theme, only render messages that contain an emote.
+        return;
+      }
+      this.delayedQueue.push(message);
+    });
 
     this.connection.onDeleteMessage((id) => {
       // if message is on screen, remove it
@@ -109,6 +119,20 @@ export class MessagesElement extends LitElement {
   private scrollToBottom() {
     const el = document.getElementById("messages");
     el && (el.scrollTop = el.scrollHeight + 100);
+  }
+
+  private shouldIncludeMessageInEmoteOnly(message: FragmentedChatMessage) {
+    const firstEmote = message.content.fragments.find((f) => f.type === "image") as ImageFragment;
+    if (!firstEmote) {
+      return false; // no emotes in msg
+    }
+
+    if (firstEmote.image === this.lastEmoteImage) {
+      return false; // same emote as before
+    }
+
+    this.lastEmoteImage = firstEmote.image;
+    return true;
   }
 }
 

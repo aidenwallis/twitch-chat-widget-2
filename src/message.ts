@@ -5,8 +5,8 @@ import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { ColorCorrection } from "./color-correction";
 import { lookupBadge } from "./external-data";
-import { Fragment, FragmentGenerationFactory } from "./fragment";
-import { ChatMessage } from "./twitch-connection";
+import { Fragment } from "./fragment";
+import { FragmentedChatMessage } from "./twitch-connection";
 import { Theme, isEmoteOnly, theme } from "./url";
 
 const colorCorrection = new ColorCorrection();
@@ -53,7 +53,7 @@ const themes: Record<Theme, ReturnType<typeof css>> = {
 @customElement("app-message")
 export class MessageElement extends LitElement {
   @property()
-  message?: ChatMessage;
+  message?: FragmentedChatMessage;
 
   static styles = [
     css`
@@ -118,10 +118,8 @@ export class MessageElement extends LitElement {
       return null;
     }
 
-    const fragments = new FragmentGenerationFactory(this.message).build();
-
     if (isEmoteOnly()) {
-      const firstEmote = fragments.find((f) => f.type === "image");
+      const firstEmote = this.message.content.fragments.find((f) => f.type === "image");
       if (!firstEmote) return null;
       return html`<div class="emote-content">${renderFragment(firstEmote)}</div> `;
     }
@@ -146,7 +144,7 @@ export class MessageElement extends LitElement {
               >${renderName(this.message.sender)}:</span
             >
             <span class="${classMap({ content: true, italic: this.message.content.action })}"
-              >${map(fragments, renderFragment)}</span
+              >${map(this.message.content.fragments, renderFragment)}</span
             >
           </div>
         </div>
@@ -167,13 +165,13 @@ function renderFragment(fragment: Fragment) {
   }
 }
 
-function renderName(sender: ChatMessage["sender"]) {
+function renderName(sender: FragmentedChatMessage["sender"]) {
   return sender.displayName.toLowerCase() === sender.login.toLowerCase()
     ? sender.displayName
     : `${sender.displayName} (${sender.login})`;
 }
 
-function resolveNameColor(sender: ChatMessage["sender"]) {
+function resolveNameColor(sender: FragmentedChatMessage["sender"]) {
   return sender.color || "#aaa";
 }
 
