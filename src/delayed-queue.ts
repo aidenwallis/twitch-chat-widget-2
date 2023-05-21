@@ -27,7 +27,15 @@ export class DelayedQueue<T> {
 
     // clean up indexes early
     const group = this.idToGroup.get(id);
-    group && this.groupToIds[group]?.delete(id);
+    if (group) {
+      const set = this.groupToIds[group];
+      if (set) {
+        // cleanup key from set, if the set is empty, also gc it.
+        set.delete(id);
+        set.size === 0 && delete this.groupToIds[group];
+      }
+    }
+
     this.idToGroup.delete(id);
   }
 

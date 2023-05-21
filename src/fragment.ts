@@ -61,15 +61,14 @@ export class FragmentGenerationFactory {
           }.0`,
         });
 
-        i = nativeEmote.end; // 1 past the buffer to skip ending character
+        i = nativeEmote.end;
         continue;
       }
 
       const char = chars[i];
       if (char === " ") {
-        // check word
         _matchWord();
-        buffer += " ";
+        buffer += char; // matchWord will push to buffer either way, regardless of emote or not, so retain space char
         continue;
       }
 
