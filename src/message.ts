@@ -71,7 +71,6 @@ export class MessageElement extends LitElement {
 
       .content {
         color: #fff;
-        display: inline-block;
       }
 
       .message {
@@ -83,11 +82,11 @@ export class MessageElement extends LitElement {
 
       .emote {
         margin-bottom: -7px;
-        display: inline-block;
+        display: inline;
       }
 
       .badges {
-        display: inline-block;
+        display: inline;
       }
 
       .badge {
