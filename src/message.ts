@@ -7,7 +7,7 @@ import { ColorCorrection } from "./color-correction";
 import { lookupBadge } from "./external-data";
 import { Fragment } from "./fragment";
 import { FragmentedChatMessage } from "./twitch-connection";
-import { Theme, isEmoteOnly, theme } from "./url";
+import { Theme, isEmoteOnly, theme, fadeout } from "./url";
 
 const colorCorrection = new ColorCorrection();
 
@@ -59,10 +59,6 @@ export class MessageElement extends LitElement {
     css`
       :host {
         font-family: Inter, sans-serif;
-      }
-
-      .fade-out {
-        animation: fade-out 0.15s ease 15s forwards;
       }
 
       .container {
@@ -123,29 +119,29 @@ export class MessageElement extends LitElement {
       return html`<div class="emote-content">${renderFragment(firstEmote)}</div> `;
     }
 
-    return html`
-      <div class="container">
-        <div class="fade-out">
-          <div class="message">
-            <span class="badges">
-              ${map(this.message.sender.badges, (badge) => {
-                const version = lookupBadge(badge.id, badge.version);
-                if (!version) {
-                  return null;
-                }
+    const fadeOutAnimation = fadeout === "none" ? "none" : `fade-out 0.15s ease ${fadeout} forwards`;
 
-                return html`<img src="${version.url}" alt="${version.alt}" class="badge" />`;
-              })}
-            </span>
-            <span
-              class="name"
-              style="${styleMap({ color: colorCorrection.calculate(resolveNameColor(this.message.sender)) })}"
-              >${renderName(this.message.sender)}:</span
-            >
-            <span class="${classMap({ content: true, italic: this.message.content.action })}"
-              >${map(this.message.content.fragments, renderFragment)}</span
-            >
-          </div>
+    return html`
+      <div class="container" style="animation: ${fadeOutAnimation};">
+        <div class="message">
+          <span class="badges">
+            ${map(this.message.sender.badges, (badge) => {
+              const version = lookupBadge(badge.id, badge.version);
+              if (!version) {
+                return null;
+              }
+
+              return html`<img src="${version.url}" alt="${version.alt}" class="badge" />`;
+            })}
+          </span>
+          <span
+            class="name"
+            style="${styleMap({ color: colorCorrection.calculate(resolveNameColor(this.message.sender)) })}"
+            >${renderName(this.message.sender)}:</span
+          >
+          <span class="${classMap({ content: true, italic: this.message.content.action })}"
+            >${map(this.message.content.fragments, renderFragment)}</span
+          >
         </div>
       </div>
     `;

@@ -19,6 +19,16 @@ export function parseChannelFromURL() {
   return [channelID, channelLogin] as const;
 }
 
+const fadeoutValue = params.get("fadeout");
+export let fadeout: string;
+if (fadeoutValue !== null) {
+  fadeout = fadeoutValue === "off" || fadeoutValue === "0" ? "none" : `${parseInt(fadeoutValue, 10)}s`;
+} else {
+  fadeout = "15s";
+}
+
+
+
 export function isEmoteOnly() {
   return theme === "emote_dark";
 }
