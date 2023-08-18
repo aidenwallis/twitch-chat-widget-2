@@ -25,22 +25,25 @@ The widget supports 3 themes, you can change them by adding `?theme=<theme>` to 
 * `emote_black`: Only shows emotes on a black background.
 
 
-### Fade-Out Time
+### Fade out time
 
-You can customize the fade-out time of the messages by adding `?fadeout=<time in seconds>` to the URL if no other parameters are given, or `&fadeout=<time in seconds>` if other parameters are present.</br>
-For example, if you want the messages to fade out after 5 seconds, you could use `&fadeout=5` or `?fadeout=5`.</br>
-If you want to disable the fade-out effect completely, you can use `&fadeout=off` or `?fadeout=off`.
+The widget allows you to customise the fade-out time of messages. Add `?fadeout=<time in seconds>` to the URL if no other parameters are set, or `&fadeout=<time in seconds>` if other parameters are already in use.</br>
+If no fadeout time is specified, the default of 15 seconds is used.
+
+* `fadeout=off`: Messages are not faded out.
+* `fadeout=5`: Messages are faded out after 5 seconds.
 
 Examples:
 
+Fade out messages after 5 seconds:
 ```
 https://chatwidget.fossadev.com/87763385-aiden?fadeout=5
 ```
 
+Use the 'simple' theme and fade out messages after 5 seconds:
 ```
 https://chatwidget.fossadev.com/87763385-aiden?theme=simple&fadeout=5
 ```
-
 
 ## What's new?
 

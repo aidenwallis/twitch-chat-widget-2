@@ -19,12 +19,24 @@ export function parseChannelFromURL() {
   return [channelID, channelLogin] as const;
 }
 
-const fadeoutValue = params.get("fadeout");
-export let fadeout: string;
-if (fadeoutValue !== null) {
-  fadeout = fadeoutValue === "off" || fadeoutValue === "0" ? "none" : `${parseInt(fadeoutValue, 10)}s`;
-} else {
-  fadeout = "15s";
+
+export const fadeout= resolveFadeout();
+function resolveFadeout() {
+  const raw = params.get("fadeout");
+  if (raw === "off" || raw === "none") {
+    return null;
+  }
+
+  if (!raw) {
+    return "15s";
+  }
+
+  const value = parseInt(raw);
+  if (isNaN(value) || value < 0) {
+    return "15s";
+  }
+
+  return `${value}s`;
 }
 
 

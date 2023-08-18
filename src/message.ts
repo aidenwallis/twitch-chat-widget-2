@@ -119,10 +119,10 @@ export class MessageElement extends LitElement {
       return html`<div class="emote-content">${renderFragment(firstEmote)}</div> `;
     }
 
-    const fadeOutAnimation = fadeout === "none" ? "none" : `fade-out 0.15s ease ${fadeout} forwards`;
+    const fadeoutAnimation = fadeout ? `fade-out 0.15s ease ${fadeout} forwards` : "none";
 
     return html`
-      <div class="container" style="animation: ${fadeOutAnimation};">
+      <div class="container" style="animation: ${fadeoutAnimation};">
         <div class="message">
           <span class="badges">
             ${map(this.message.sender.badges, (badge) => {
