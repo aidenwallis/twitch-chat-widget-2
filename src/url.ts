@@ -19,6 +19,28 @@ export function parseChannelFromURL() {
   return [channelID, channelLogin] as const;
 }
 
+
+export const fadeout= resolveFadeout();
+function resolveFadeout() {
+  const raw = params.get("fadeout");
+  if (raw === "off" || raw === "none") {
+    return null;
+  }
+
+  if (!raw) {
+    return "15s";
+  }
+
+  const value = parseInt(raw);
+  if (isNaN(value) || value < 0) {
+    return "15s";
+  }
+
+  return `${value}s`;
+}
+
+
+
 export function isEmoteOnly() {
   return theme === "emote_dark";
 }
