@@ -13,8 +13,13 @@ const colorCorrection = new ColorCorrection();
 
 const themes: Record<Theme, ReturnType<typeof css>> = {
   simple: css`
+    :host {
+      font-family: Fredoka, Inter, sans-serif;
+    }
+
     .message {
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 2px #000, 0 0 4px #000, 0 0 8px #000;
+      font-weight: 500;
     }
   `,
   default: css`
@@ -22,7 +27,7 @@ const themes: Record<Theme, ReturnType<typeof css>> = {
       background-color: #1b1d20;
       padding: 10px 7px;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 16px;
       animation: message-enter 0.15s ease;
     }
 
