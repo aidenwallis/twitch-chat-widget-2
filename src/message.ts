@@ -17,8 +17,8 @@ const themes: Record<Theme, ReturnType<typeof css>> = {
       font-family: Fredoka, Inter, sans-serif;
     }
 
-    .message {
-      text-shadow: 0 0 2px #000, 0 0 4px #000, 0 0 8px #000;
+    .content {
+      text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
       font-weight: 500;
     }
   `,
